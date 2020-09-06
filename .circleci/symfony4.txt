@@ -1,0 +1,71 @@
+ 
+
+es mejor usar abstractController en vez de controller para heredar las funcionalidades en nuestros controladres
+
+twig 
+	puede usar custom filter
+	puede tener variables globales
+	puedes configurar las paginas de error(404)
+assets managment
+	encore(es la mejor opcion y esta basado en webpack
+		para manejar javascript y css dependencies
+		instalacion
+			yarn add @symfony/webpack-encore --dev
+			yarn add bootstrap@4.0.0
+			yarn add holderjs
+			yarn add popper.js@1.12.9
+			yarn add jquery@3.3.1
+		despues en el archivo webpack.config.js:
+			*************************CODE***********************************
+				var Encore = require('@symfony/webpack-encore');
+
+				Encore
+				    // the project directory where compiled assets will be stored
+				    .setOutputPath('public/build/')
+				    // the public path used by the web server to access the previous directory
+				    .setPublicPath('/build')
+				    .cleanupOutputBeforeBuild()
+				    .enableSourceMaps(!Encore.isProduction())
+				    // uncomment to create hashed filenames (e.g. app.abc123.css)
+				    // .enableVersioning(Encore.isProduction())
+
+				    // uncomment to define the assets of the project
+				    .addEntry('js/app', [
+				        './node_modules/jquery/dist/jquery.slim.js',
+				        './node_modules/popper.js/dist/umd/popper.min.js',
+				        './node_modules/bootstrap/dist/js/bootstrap.min.js',
+				        './node_modules/holderjs/holder.min.js'
+				    ])
+				    .addStyleEntry('css/app', [
+				        './node_modules/bootstrap/dist/css/bootstrap.min.css',
+				        './assets/css/app.css'
+				    ])
+
+				// uncomment if you use Sass/SCSS files
+				// .enableSassLoader()
+
+				// uncomment for legacy applications that require $/jQuery as a global variable
+				// .autoProvidejQuery()
+				;
+
+				module.exports = Encore.getWebpackConfig();
+			*************************END CODE***********************************
+			despues para transpilar 
+				./node_modules/.bin/encore dev
+
+				y para evitar compilarlo todo siempre
+					usa: ./node_modules/.bin/encore dev --watch
+migrations
+	php bin/console make:migration
+	php bin/console doctrine:migrations:migrate
+	y para revertir :  php bin/console doctrine:migrations:migrate prev
+fixtures
+	composer require --dev doctrine/doctrine-fixtures-bundle
+security
+	-firewall: define witch parts are secure and witch authentication method should be use
+	-encoders: define witch algorithim should be use to encode the user password
+	-user providers: where the users are stored(database, in-memory)
+	-Access Control: allow to restric certains part of the application to specific type of users(exmaple: only users with ADMIN role can access to /admin section)
+	-Roles(ROLE_USER, ROLE_ADMIN...) an user can have one or more roles
+	-role hierarchy: some roles can extends from other roles
+	-voter: its an object that can decide if centain user can do an specific action in a certain resource(Article, Image, Project...)
